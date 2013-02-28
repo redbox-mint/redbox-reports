@@ -23,6 +23,7 @@ import com.googlecode.fascinator.portal.report.BarChartData;
 import com.googlecode.fascinator.portal.report.ChartData;
 import com.googlecode.fascinator.portal.report.ChartGenerator;
 import com.googlecode.fascinator.portal.services.ScriptingServices;
+import com.googlecode.fascinator.portal.report.type.ChartHandler;
 
 public class RecordsByStage2ChartHandler implements ChartHandler {
 
@@ -37,7 +38,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
 
     public RecordsByStage2ChartHandler() {
         BarChartData chartData = new BarChartData("", "", "",
-                BarChartData.LabelPos.VERTICAL, BarChartData.LabelPos.RIGHT,
+        		BarChartData.LabelPos.SLANTED, BarChartData.LabelPos.RIGHT,
                 imgW, imgH, true);
         chartData.setUseSeriesColor(true);
         this.chartData = chartData;
@@ -62,8 +63,12 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
     public void renderChart(OutputStream outputStream) throws IOException,
             IndexerException {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ((BarChartData) chartData).setTitle("[Insert Title]");
+    	DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat displayDateFormat = new SimpleDateFormat("d/M/yyyy");
+        
+        ((BarChartData) chartData).setTitle(displayDateFormat.format(fromDate)
+                + " to " + displayDateFormat.format(toDate)
+                + "\n Record Types by Workflow Stage");
 
         Map<String, Map<String, Integer>> stepCountMap = new HashMap<String, Map<String, Integer>>();
         stepCountMap.put("inbox", getDataTypeCountMap());
@@ -75,8 +80,8 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
 
         Indexer indexer = scriptingServices.getIndexer();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        query += " AND date_created:[" + dateFormat.format(fromDate)
-                + "T00:00:00.000Z TO " + dateFormat.format(toDate)
+        query += " AND date_created:[" + solrDateFormat.format(fromDate)
+                + "T00:00:00.000Z TO " + solrDateFormat.format(toDate)
                 + "T23:59:59.999Z]";
         SearchRequest request = new SearchRequest(query);
         int start = 0;

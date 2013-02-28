@@ -24,6 +24,7 @@ import com.googlecode.fascinator.portal.report.BarChartData;
 import com.googlecode.fascinator.portal.report.ChartData;
 import com.googlecode.fascinator.portal.report.ChartGenerator;
 import com.googlecode.fascinator.portal.services.ScriptingServices;
+import com.googlecode.fascinator.portal.report.type.ChartHandler;
 
 public class RecordsPublishedByMonthChartHandler implements ChartHandler {
 
@@ -65,16 +66,18 @@ public class RecordsPublishedByMonthChartHandler implements ChartHandler {
     @Override
     public void renderChart(OutputStream outputStream) throws IOException,
             IndexerException {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ((BarChartData) chartData).setTitle(dateFormat.format(fromDate)
-                + " to " + dateFormat.format(toDate)
+    	DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat displayDateFormat = new SimpleDateFormat("d/M/yyyy");
+        
+        ((BarChartData) chartData).setTitle(displayDateFormat.format(fromDate)
+                + " to " + displayDateFormat.format(toDate)
                 + "\n Records Published By Month");
 
         Indexer indexer = scriptingServices.getIndexer();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         query += " AND workflow_step:live AND date_created:["
-                + dateFormat.format(fromDate) + "T00:00:00.000Z TO "
-                + dateFormat.format(toDate) + "T23:59:59.999Z]";
+                + solrDateFormat.format(fromDate) + "T00:00:00.000Z TO "
+                + solrDateFormat.format(toDate) + "T23:59:59.999Z]";
         SearchRequest request = new SearchRequest(query);
         int start = 0;
         int pageSize = 10;
@@ -130,7 +133,7 @@ public class RecordsPublishedByMonthChartHandler implements ChartHandler {
                             "eventTime");
                     try {
                         Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(dateFormat.parse(eventTimeString));
+                        calendar.setTime(solrDateFormat.parse(eventTimeString));
                         int month = calendar.get(Calendar.MONTH);
                         if (monthCountMap.get(month) == null) {
                             monthCountMap.put(month, 1);

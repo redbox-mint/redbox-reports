@@ -20,6 +20,7 @@ import com.googlecode.fascinator.portal.report.BarChartData;
 import com.googlecode.fascinator.portal.report.ChartData;
 import com.googlecode.fascinator.portal.report.ChartGenerator;
 import com.googlecode.fascinator.portal.services.ScriptingServices;
+import com.googlecode.fascinator.portal.report.type.ChartHandler;
 
 public class PublishedRecordsByTypeChartHandler implements ChartHandler {
 
@@ -62,14 +63,18 @@ public class PublishedRecordsByTypeChartHandler implements ChartHandler {
     @Override
     public void renderChart(OutputStream outputStream) throws IOException,
             IndexerException {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ((BarChartData) chartData).setTitle("[Insert Title]");
+        DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat displayDateFormat = new SimpleDateFormat("d/M/yyyy");
+        
+        ((BarChartData) chartData).setTitle(displayDateFormat.format(fromDate)
+                + " to " + displayDateFormat.format(toDate)
+                + "\n Published Records by Record Type");
 
         Indexer indexer = scriptingServices.getIndexer();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         query += " AND published:true AND oai_set:default AND date_created:["
-                + dateFormat.format(fromDate) + "T00:00:00.000Z TO "
-                + dateFormat.format(toDate) + "T23:59:59.999Z]";
+                + solrDateFormat.format(fromDate) + "T00:00:00.000Z TO "
+                + solrDateFormat.format(toDate) + "T23:59:59.999Z]";
         SearchRequest request = new SearchRequest(query);
         int start = 0;
         int pageSize = 10;
@@ -96,9 +101,9 @@ public class PublishedRecordsByTypeChartHandler implements ChartHandler {
         String url = systemConfig.getString("http://localhost:9001/mint",
                 "proxy-urls", "Published_Records_By_Type")
                 + "&dateFrom="
-                + dateFormat.format(fromDate)
+                + solrDateFormat.format(fromDate)
                 + "&dateTo="
-                + dateFormat.format(toDate);
+                + solrDateFormat.format(toDate);
         BasicHttpClient client = new BasicHttpClient(url);
         GetMethod get = new GetMethod(url);
         client.executeMethod(get);

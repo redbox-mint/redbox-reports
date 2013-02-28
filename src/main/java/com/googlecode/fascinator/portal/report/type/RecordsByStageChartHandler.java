@@ -23,6 +23,7 @@ import com.googlecode.fascinator.portal.report.BarChartData;
 import com.googlecode.fascinator.portal.report.ChartData;
 import com.googlecode.fascinator.portal.report.ChartGenerator;
 import com.googlecode.fascinator.portal.services.ScriptingServices;
+import com.googlecode.fascinator.portal.report.type.ChartHandler;
 
 public class RecordsByStageChartHandler implements ChartHandler {
 
@@ -64,9 +65,10 @@ public class RecordsByStageChartHandler implements ChartHandler {
     @Override
     public void renderChart(OutputStream outputStream) throws IOException,
             IndexerException {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ((BarChartData) chartData).setTitle(dateFormat.format(fromDate)
-                + " to " + dateFormat.format(toDate)
+        DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat displayDateFormat = new SimpleDateFormat("d/M/yyyy");
+        ((BarChartData) chartData).setTitle(displayDateFormat.format(fromDate)
+                + " to " + displayDateFormat.format(toDate)
                 + "\n Records by Workflow Stage");
 
         Map<String, Integer> stepCountMap = new HashMap<String, Integer>();
@@ -79,8 +81,8 @@ public class RecordsByStageChartHandler implements ChartHandler {
 
         Indexer indexer = scriptingServices.getIndexer();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        query += " AND date_created:[" + dateFormat.format(fromDate)
-                + "T00:00:00.000Z TO " + dateFormat.format(toDate)
+        query += " AND date_created:[" + solrDateFormat.format(fromDate)
+                + "T00:00:00.000Z TO " + solrDateFormat.format(toDate)
                 + "T23:59:59.999Z]";
         SearchRequest request = new SearchRequest(query);
         int start = 0;
