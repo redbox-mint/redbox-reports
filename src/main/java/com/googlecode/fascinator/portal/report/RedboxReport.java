@@ -118,23 +118,33 @@ public class RedboxReport extends Report {
         String solrField = (String) reportCriteria.get("solrField");
         String queryString = solrField + ":";
 
+        if(queryFilters
+                .get("report-criteria." + index + ".match_contains") != null) {
         String matchContainsValue = (String) ((JsonObject) queryFilters
                 .get("report-criteria." + index + ".match_contains"))
                 .get("value");
 
         if ("field_contains".equals(matchContainsValue)) {
-            criteriaValue = criteriaValue + "*";
-        }
+        		//if empty string treat it like null
+        		if("".equals(criteriaValue)) {
+        			criteriaValue = "[* TO *]";
+        		}else {
+        			criteriaValue = criteriaValue + "*";
+        		}
+			}
+		} 
+        
         queryString = queryString + "\"" + criteriaValue + "\"";
+		if (queryFilters.get("report-criteria." + index + ".include_nulls") != null) {
+			String includeNullsValue = (String) ((JsonObject) queryFilters
+					.get("report-criteria." + index + ".include_nulls"))
+					.get("value");
 
-        String includeNullsValue = (String) ((JsonObject) queryFilters
-                .get("report-criteria." + index + ".include_nulls"))
-                .get("value");
-
-        if ("field_include_null".equals(includeNullsValue)) {
-            queryString = "(" + queryString + " OR (-" + solrField
-                    + ":[* TO *] AND *:*))";
-        }
+			if ("field_include_null".equals(includeNullsValue)) {
+				queryString = "(" + queryString + " OR (-" + solrField
+						+ ":[* TO *] AND *:*))";
+			}
+		}
 
         String logicOpValue = (String) ((JsonObject) queryFilters
                 .get("report-criteria." + index + ".logicalOp")).get("value");
