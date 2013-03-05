@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.json.simple.JSONArray;
 import com.googlecode.fascinator.api.indexer.Indexer;
 import com.googlecode.fascinator.api.indexer.IndexerException;
 import com.googlecode.fascinator.api.indexer.SearchRequest;
+import com.googlecode.fascinator.common.JsonObject;
 import com.googlecode.fascinator.common.JsonSimple;
 import com.googlecode.fascinator.common.solr.SolrDoc;
 import com.googlecode.fascinator.common.solr.SolrResult;
@@ -35,7 +37,11 @@ public class RecordsByStageChartHandler implements ChartHandler {
     private int imgH = 400;
     private Date fromDate = null;
     private Date toDate = null;
-
+    private String titleStr = "";
+    private String headerStr = "Records by Workflow Stage";
+    private String dateFromStr = "";
+    private String dateToStr = "";
+    
     public RecordsByStageChartHandler() {
         chartData = new BarChartData("", "", "", BarChartData.LabelPos.SLANTED,
                 BarChartData.LabelPos.HIDDEN, imgW, imgH, false);
@@ -65,11 +71,32 @@ public class RecordsByStageChartHandler implements ChartHandler {
     @Override
     public void renderChart(OutputStream outputStream) throws IOException,
             IndexerException {
-        DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Map<String, Integer> stepCountMap = getData();
+        
+        ((BarChartData) chartData).setTitle(titleStr);
+        
+        chartData.addEntry(stepCountMap.get("inbox"), "", "Inbox");
+        chartData.addEntry(stepCountMap.get("investigation"), "",
+                "Investigation");
+        chartData.addEntry(stepCountMap.get("metadata-review"), "", "Metadata");
+        chartData
+                .addEntry(stepCountMap.get("final-review"), "", "Final Review");
+        chartData.addEntry(stepCountMap.get("live"), "", "Published");
+        chartData.addEntry(stepCountMap.get("retired"), "", "Retired");
+
+        ChartGenerator
+                .renderPNGBarChart(outputStream, (BarChartData) chartData);
+    }
+
+	private Map<String, Integer> getData() throws IndexerException, IOException {
+		DateFormat solrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat displayDateFormat = new SimpleDateFormat("d/M/yyyy");
-        ((BarChartData) chartData).setTitle(displayDateFormat.format(fromDate)
-                + " to " + displayDateFormat.format(toDate)
-                + "\n Records by Workflow Stage");
+        dateFromStr = displayDateFormat.format(fromDate);
+        dateToStr = displayDateFormat.format(toDate);
+        titleStr = dateFromStr
+                + " to " + dateToStr
+                + "\n "+headerStr;
+        
 
         Map<String, Integer> stepCountMap = new HashMap<String, Integer>();
         stepCountMap.put("inbox", 0);
@@ -116,19 +143,8 @@ public class RecordsByStageChartHandler implements ChartHandler {
             indexer.search(request, result);
             resultObject = new SolrResult(result.toString());
         }
-
-        chartData.addEntry(stepCountMap.get("inbox"), "", "Inbox");
-        chartData.addEntry(stepCountMap.get("investigation"), "",
-                "Investigation");
-        chartData.addEntry(stepCountMap.get("metadata-review"), "", "Metadata");
-        chartData
-                .addEntry(stepCountMap.get("final-review"), "", "Final Review");
-        chartData.addEntry(stepCountMap.get("live"), "", "Published");
-        chartData.addEntry(stepCountMap.get("retired"), "", "Retired");
-
-        ChartGenerator
-                .renderPNGBarChart(outputStream, (BarChartData) chartData);
-    }
+		return stepCountMap;
+	}
 
     @Override
     public void setImgW(int imgW) {
@@ -148,5 +164,34 @@ public class RecordsByStageChartHandler implements ChartHandler {
     @Override
     public void setSystemConfig(JsonSimple systemConfig) {
         this.systemConfig = systemConfig;
+    }
+    
+    @Override
+    public void renderCsv(Writer writer, String chartKey) throws IOException, IndexerException {
+    	Map<String, Integer> stepCountMap = getData();
+    	writer.write("Chart Name,");
+    	writer.write(headerStr);
+    	writer.write(System.getProperty("line.separator"));
+    	writer.write("Date From,");
+    	writer.write(dateFromStr);
+    	writer.write(System.getProperty("line.separator"));
+    	writer.write("Date To,");
+    	writer.write(dateToStr);
+    	writer.write(System.getProperty("line.separator"));
+    	JsonObject labelConfig = systemConfig.getObject("charts", chartKey, "csv-field-label");
+    	String[] flds = new String[]{"inbox", "investigation", "metadata-review", "final-review", "live", "retired"};
+    	for (String fldKey : flds) {
+    		writer.write(getLabel(fldKey, labelConfig));
+    		writer.write(",");
+    		writer.write(stepCountMap.get(fldKey).toString());
+    		writer.write(System.getProperty("line.separator"));
+    	}
+    }
+    
+    private String getLabel(String key, JsonObject labelConfig) {
+    	if (labelConfig.get(key) == null) {
+			return key;
+		}
+		return (String)labelConfig.get(key);
     }
 }
