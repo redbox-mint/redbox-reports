@@ -82,7 +82,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
                 stepCountMap.get("investigation").get("catalogueOrIndex"),
                 "Catalogue/Index", "Investigation", clrIdx);
         chartData.addEntry(stepCountMap.get("investigation").get("repository"),
-                "Repository/Index", "Investigation", clrRep);
+                "Repository", "Investigation", clrRep);
         chartData.addEntry(stepCountMap.get("investigation").get("dataset"),
                 "Dataset", "Investigation", clrDat);
         chartData.addEntry(stepCountMap.get("investigation").get("collection"),
@@ -95,7 +95,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
                 stepCountMap.get("metadata-review").get("catalogueOrIndex"),
                 "Catalogue/Index", "Metadata Review", clrIdx);
         chartData.addEntry(stepCountMap.get("metadata-review")
-                .get("repository"), "Repository/Index", "Metadata Review",
+                .get("repository"), "Repository", "Metadata Review",
                 clrRep);
         chartData.addEntry(stepCountMap.get("metadata-review").get("dataset"),
                 "Dataset", "Metadata Review", clrDat);
@@ -109,7 +109,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
                 stepCountMap.get("final-review").get("catalogueOrIndex"),
                 "Catalogue/Index", "Final Review", clrIdx);
         chartData.addEntry(stepCountMap.get("final-review").get("repository"),
-                "Repository/Index", "Final Review", clrRep);
+                "Repository", "Final Review", clrRep);
         chartData.addEntry(stepCountMap.get("final-review").get("dataset"),
                 "Dataset", "Final Review", clrDat);
         chartData.addEntry(stepCountMap.get("final-review").get("collection"),
@@ -121,7 +121,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
         chartData.addEntry(stepCountMap.get("live").get("catalogueOrIndex"),
                 "Catalogue/Index", "Published", clrIdx);
         chartData.addEntry(stepCountMap.get("live").get("repository"),
-                "Repository/Index", "Published", clrRep);
+                "Repository", "Published", clrRep);
         chartData.addEntry(stepCountMap.get("live").get("dataset"), "Dataset",
                 "Published", clrDat);
         chartData.addEntry(stepCountMap.get("live").get("collection"),
@@ -133,7 +133,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
         chartData.addEntry(stepCountMap.get("retired").get("catalogueOrIndex"),
                 "Catalogue/Index", "Retired", clrIdx);
         chartData.addEntry(stepCountMap.get("retired").get("repository"),
-                "Repository/Index", "Retired", clrRep);
+                "Repository", "Retired", clrRep);
         chartData.addEntry(stepCountMap.get("retired").get("dataset"),
                 "Dataset", "Retired", clrDat);
         chartData.addEntry(stepCountMap.get("retired").get("collection"),
@@ -155,7 +155,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
         
         ((BarChartData) chartData).setTitle(dateFromStr
                 + " to " + dateToStr
-                + "\n Record Types by Workflow Stage");
+                + "\n Record Type by Workflow Stage");
 
         Map<String, Map<String, Integer>> stepCountMap = new HashMap<String, Map<String, Integer>>();
         stepCountMap.put("inbox", getDataTypeCountMap());
@@ -249,7 +249,7 @@ public class RecordsByStage2ChartHandler implements ChartHandler {
     @Override
     public void renderCsv(Writer writer, String chartKey) throws IOException, IndexerException {
     	Map<String, Map<String, Integer>> countMap = getData();
-    	writer.write("Chart Name,Record Types by Workflow Stage");
+    	writer.write("Chart Name,Record Type by Workflow Stage");
     	writer.write(System.getProperty("line.separator"));
     	writer.write("Date From,");
     	writer.write(dateFromStr);
