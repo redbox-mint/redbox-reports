@@ -1,5 +1,7 @@
 package com.googlecode.fascinator.portal.report.service;
 
+import java.util.HashMap;
+
 public class StatResult {		
 		private String key;
 		private String name;
@@ -7,6 +9,7 @@ public class StatResult {
 		private String solrField;
 		private String solrFieldValue;
 		private int counts;
+		private HashMap<String, Integer> groupMap;
 		
 		public StatResult(String key, String name, String label, String field, String value) {
 			this.key = key;
@@ -15,6 +18,7 @@ public class StatResult {
 			this.solrField = field;
 			this.solrFieldValue = value;
 			this.counts = 0;
+			groupMap = new HashMap<String, Integer>();
 		}
 
 		public String getKey() {
@@ -67,5 +71,13 @@ public class StatResult {
 
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		public HashMap<String, Integer> getGroupMap() {
+			return groupMap;
+		}
+
+		public void setGroupMap(HashMap<String, Integer> groupMap) {
+			this.groupMap = groupMap;
 		}
 	}

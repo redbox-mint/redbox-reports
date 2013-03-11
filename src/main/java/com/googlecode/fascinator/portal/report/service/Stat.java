@@ -16,6 +16,7 @@ public class Stat {
 		private Set<String> fields;
 		private HashMap<String, StatResult> resultsByName;
 		private String rows;
+		private String url;
 		
 		public Stat(String name, String query, List<String> fq, String rows) {
 			results = new HashMap<String, StatResult>();
@@ -25,6 +26,14 @@ public class Stat {
 			this.query = query;
 			this.fq = fq;
 			this.rows = rows;
+		}
+		
+		public Stat(String name, String url) {
+			this.name = name;
+			this.url = url;
+			results = new HashMap<String, StatResult>();
+			resultsByName = new HashMap<String, StatResult>();
+			fields = new HashSet<String>();
 		}
 		
 		public void resetCounts() {
@@ -86,5 +95,13 @@ public class Stat {
 		
 		public StatResult getResultByName(String name) {
 			return resultsByName.get(name);
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
 		}
 }
