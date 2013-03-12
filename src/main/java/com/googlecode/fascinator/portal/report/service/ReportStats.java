@@ -70,7 +70,7 @@ public class ReportStats implements FascinatorService {
 						stat.addResult(result);
 					}
 				} else {
-					String url = (String) jsonStat.get("url");
+					String url = new JsonSimple(jsonStat).getString("http://localhost:9001/mint", "url");
 					stat = new Stat(name, url);
 					JSONArray fieldsArray = config.getArray("config", "stats", idx, "fields");				
 					for (Object fieldObj : fieldsArray) {					
