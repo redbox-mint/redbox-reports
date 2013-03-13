@@ -8,11 +8,6 @@
 	<packaging>jar</packaging>
 	<name>ReDBox Reports</name>
 
-	<parent>
-		<groupId>com.googlecode.redbox-mint</groupId>
-		<artifactId>redbox-project</artifactId>
-		<version>1.6-RC01-SNAPSHOT</version>
-	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
