@@ -132,8 +132,8 @@ public class RedboxReport extends Report {
         			criteriaValue = criteriaValue + "*";
         		}
 			}
-		} 
-        
+		}
+        criteriaValue = criteriaValue.replace(":","\\:");
         queryString = queryString + "\"" + criteriaValue + "\"";
 		if (queryFilters.get("report-criteria." + index + ".include_nulls") != null) {
 			String includeNullsValue = (String) ((JsonObject) queryFilters
