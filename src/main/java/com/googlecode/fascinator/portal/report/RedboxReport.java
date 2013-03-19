@@ -128,13 +128,16 @@ public class RedboxReport extends Report {
         		//if empty string treat it like null
         		if("".equals(criteriaValue)) {
         			criteriaValue = "[* TO *]";
-        		}else {
-        			criteriaValue = criteriaValue + "*";
+        		} else {
+        			criteriaValue = "(" + criteriaValue + "*)";
         		}
 			}
+        	queryString = queryString + criteriaValue;
+		} else {
+			queryString = queryString + "\"" + criteriaValue + "\"";
 		}
         criteriaValue = criteriaValue.replace(":","\\:");
-        queryString = queryString + "\"" + criteriaValue + "\"";
+        
 		if (queryFilters.get("report-criteria." + index + ".include_nulls") != null) {
 			String includeNullsValue = (String) ((JsonObject) queryFilters
 					.get("report-criteria." + index + ".include_nulls"))
