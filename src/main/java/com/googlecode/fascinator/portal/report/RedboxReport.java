@@ -118,13 +118,16 @@ public class RedboxReport extends Report {
         String solrField = (String) reportCriteria.get("solrField");
         String queryString = solrField + ":";
 
+        criteriaValue = criteriaValue.replace(":","\\:");
+        criteriaValue = criteriaValue.replace("-","\\-");
         if(queryFilters
                 .get("report-criteria." + index + ".match_contains") != null) {
-        String matchContainsValue = (String) ((JsonObject) queryFilters
+        	
+        	String matchContainsValue = (String) ((JsonObject) queryFilters
                 .get("report-criteria." + index + ".match_contains"))
                 .get("value");
 
-        if ("field_contains".equals(matchContainsValue)) {
+        	if ("field_contains".equals(matchContainsValue)) {
         		//if empty string treat it like null
         		if("".equals(criteriaValue)) {
         			criteriaValue = "[* TO *]";
@@ -134,9 +137,12 @@ public class RedboxReport extends Report {
 			}
         	queryString = queryString + criteriaValue;
 		} else {
-			queryString = queryString + "\"" + criteriaValue + "\"";
+			if (solrField.equalsIgnoreCase("dc_subject")) {
+				queryString = queryString + "(" + criteriaValue + ")";
+			} else {
+				queryString = queryString + "\"" + criteriaValue + "\"";	
+			}
 		}
-        criteriaValue = criteriaValue.replace(":","\\:");
         
 		if (queryFilters.get("report-criteria." + index + ".include_nulls") != null) {
 			String includeNullsValue = (String) ((JsonObject) queryFilters
