@@ -75,7 +75,7 @@ public class PublishedRecordsByTypeChartHandler implements ChartHandler {
         JsonSimple mintResult = getMintData(solrDateFormat);
 
         chartData.addEntry(
-                mintResult.getInteger(0, "Parties")
+                mintResult.getInteger(0, "Parties_Groups")
                         + mintResult.getInteger(0, "Parties_People"), "Party",
                 "Published Records", new Color(98, 157, 209));
         chartData.addEntry(datasetCount, "Collection", "Published Records",

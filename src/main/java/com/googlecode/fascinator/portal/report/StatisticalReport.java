@@ -18,6 +18,9 @@ public class StatisticalReport extends Report {
     private static final String AND_OPERATOR = " AND ";
     private String strDateFormat;
     private String solrDateFormat = "yyyy-MM-dd";    
+    private String strStartDate;
+    private String strEndDate;
+    private String strPublished;
 
     public StatisticalReport() throws IOException {
         super();
@@ -47,14 +50,7 @@ public class StatisticalReport extends Report {
         List<String> keys = Arrays.asList(keyArray);
         java.util.Collections.sort(keys);
         query += processDateCriteria(queryFilters);
-        query += processShowCriteria(queryFilters);
-        int i = 1;
-        while (true) {
-            if (keys.indexOf("report-criteria." + i + ".dropdown") == -1) {
-                break;
-            }            
-            i++;
-        }
+        query += processShowCriteria(queryFilters);       
         return query;
     }
 
@@ -62,7 +58,10 @@ public class StatisticalReport extends Report {
         String showOption = (String) ((JsonObject) queryFilters
                 .get("showOption")).get("value");
         if ("published".equals(showOption)) {
-            return AND_OPERATOR + "published:true";
+        	strPublished = "true";
+            return AND_OPERATOR + "published:true";            
+        } else {
+        	strPublished = "";
         }
         return "";
     }
@@ -77,20 +76,19 @@ public class StatisticalReport extends Report {
             dateCriteriaQuery += "last_modified:";
         }
         DateFormat queryDateFormatter = new SimpleDateFormat(strDateFormat);
-        DateFormat solrDateFormatter = new SimpleDateFormat(solrDateFormat);
-        String dateFrom, dateTo;
+        DateFormat solrDateFormatter = new SimpleDateFormat(solrDateFormat);        
         try {
-            dateFrom = solrDateFormatter.format(queryDateFormatter
+            strStartDate = solrDateFormatter.format(queryDateFormatter
                     .parse((String) ((JsonObject) queryFilters.get("dateFrom"))
                             .get("value")));
 
-            dateTo = solrDateFormatter.format(queryDateFormatter
+            strEndDate = solrDateFormatter.format(queryDateFormatter
                     .parse((String) ((JsonObject) queryFilters.get("dateTo"))
                             .get("value")));
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        dateCriteriaQuery += "[" + dateFrom + "T00:00:00.000Z TO " + dateTo
+        dateCriteriaQuery += "[" + strStartDate + "T00:00:00.000Z TO " + strEndDate
                 + "T23:59:59.999Z] ";
         return dateCriteriaQuery;
     }
@@ -115,5 +113,29 @@ public class StatisticalReport extends Report {
     public JsonSimple getConfig() {
         return config;
     }
+
+	public String getStrStartDate() {
+		return strStartDate;
+	}
+
+	public void setStrStartDate(String strStartDate) {
+		this.strStartDate = strStartDate;
+	}
+
+	public String getStrEndDate() {
+		return strEndDate;
+	}
+
+	public void setStrEndDate(String strEndDate) {
+		this.strEndDate = strEndDate;
+	}
+
+	public String getStrPublished() {
+		return strPublished;
+	}
+
+	public void setStrPublished(String strPublished) {
+		this.strPublished = strPublished;
+	}
 
 }

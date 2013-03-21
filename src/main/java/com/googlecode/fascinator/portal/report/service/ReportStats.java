@@ -14,6 +14,7 @@ import java.util.Set;
 import com.googlecode.fascinator.common.BasicHttpClient;
 import com.googlecode.fascinator.common.JsonObject;
 import com.googlecode.fascinator.common.JsonSimple;
+import com.googlecode.fascinator.portal.report.StatisticalReport;
 import com.googlecode.fascinator.portal.services.FascinatorService;
 import com.googlecode.fascinator.api.indexer.IndexerException;
 import com.googlecode.fascinator.api.indexer.SearchRequest;
@@ -95,13 +96,13 @@ public class ReportStats implements FascinatorService {
 	 * 
 	 * @return Map of Stats
 	 */
-	public HashMap<String, Stat> getStatCounts(Indexer indexer, String customQuery) throws Exception {	
+	public synchronized HashMap<String, Stat> getStatCounts(Indexer indexer, String customQuery, StatisticalReport report) throws Exception {	
 		for (String key : statMap.keySet()) {
 			Stat stat = statMap.get(key);
 			stat.resetCounts();
 			String query = (customQuery==null ? stat.getQuery() : customQuery);
 			if (key.startsWith("mint")) {
-				getMintStats(stat, customQuery);
+				getMintStats(stat, customQuery, report);
 			} else {
 				getRedboxStats(indexer, stat, query);
 			}
@@ -117,11 +118,18 @@ public class ReportStats implements FascinatorService {
 		return statMap;
 	}
 	
-	private void getMintStats(Stat stat, String query) throws IOException  {
-		String targetUrl = stat.getUrl(); //+ "appendFilter="+URLEncoder.encode(query, "utf-8");
+	private void getMintStats(Stat stat, String query, StatisticalReport report) throws IOException  {
+		StringBuilder param = new StringBuilder();
+		param.append("dateFrom=");
+		param.append(report.getStrStartDate());
+		param.append("&dateTo=");
+		param.append(report.getStrEndDate());
+		param.append("&published=");
+		param.append(report.getStrPublished());
+		String targetUrl = stat.getUrl() + param.toString();
 		log.debug("Using url"+targetUrl);
 		BasicHttpClient client = new BasicHttpClient(targetUrl);
-        GetMethod get = new GetMethod(targetUrl);
+        GetMethod get = new GetMethod(targetUrl);        
         client.executeMethod(get);
 
         JsonSimple mintResult = new JsonSimple(get.getResponseBodyAsString());
