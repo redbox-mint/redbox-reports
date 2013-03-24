@@ -161,7 +161,7 @@ public class RedboxReport extends Report {
         if ("OR".equals(logicOpValue)) {
             logicOperand = " OR ";
         }
-        return logicOperand + queryString;
+        return logicOperand + "("+queryString+")";
     }
 
     private JsonObject findJsonObjectWithKey(String keyName) {

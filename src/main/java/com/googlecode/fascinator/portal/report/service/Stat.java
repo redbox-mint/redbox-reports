@@ -40,6 +40,7 @@ public class Stat {
 			for (String key:results.keySet()) {
 				StatResult statResult = results.get(key);
 				statResult.setCounts(0);
+				statResult.getGroupMap().clear();
 			}
 		}
 
