@@ -98,8 +98,8 @@ public class SearchCriteriaListing {
 				.setMatchingOperator("field_match");
 			}
 			
-			if (keys.indexOf(item + "match_contains") != -1) {
-			criteriaItem.setAllowNulls((String) ((JsonObject) queryFilters
+			if (keys.indexOf(item + "include_nulls") != -1) {
+				criteriaItem.setAllowNulls((String) ((JsonObject) queryFilters
 					.get(item + "include_nulls")).get("value"));
 			} else {
 				criteriaItem.setAllowNulls("field_include_null");
