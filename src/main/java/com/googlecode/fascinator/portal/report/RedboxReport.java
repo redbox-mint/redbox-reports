@@ -57,13 +57,14 @@ public class RedboxReport extends Report {
 		query += processDateCriteria(queryFilters);
 		query += processShowCriteria(queryFilters);
 		int i = 1;
-		while (true) {
+		/*while (true) {
 			if (keys.indexOf("report-criteria." + i + ".dropdown") == -1) {
 				break;
 			}
 			query += processReportCriteria(queryFilters, i);
 			i++;
-		}
+		}*/
+		query += " AND workflow_id:dataset";
 		return query;
 	}
 
@@ -104,7 +105,7 @@ public class RedboxReport extends Report {
 		return dateCriteriaQuery;
 	}
 
-	private String processReportCriteria(JsonObject queryFilters, int index) {
+/*	private String processReportCriteria(JsonObject queryFilters, int index) {
 		String keyName = (String) ((JsonObject) queryFilters
 				.get("report-criteria." + index + ".dropdown-input"))
 				.get("value");
@@ -161,7 +162,9 @@ public class RedboxReport extends Report {
 			logicOperand = " OR ";
 		}
 		return logicOperand + "(" + queryString + ")";
-	}
+	}*/
+	
+
 
 	public JsonObject findJsonObjectWithKey(String keyName) {
 		Object[] reportCriteriaOptions = reportCriteriaOptionsJson.getArray(

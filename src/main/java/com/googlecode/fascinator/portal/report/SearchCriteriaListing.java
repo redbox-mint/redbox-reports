@@ -82,15 +82,29 @@ public class SearchCriteriaListing {
 			criteriaItem.setSolr_field((String) rb.findJsonObjectWithKey(
 					criteriaItem.getField()).get("solrField"));
 
-			criteriaItem.setOperator((String) ((JsonObject) queryFilters
+			if (keys.indexOf(item + "logicalOp") != -1) {
+				criteriaItem.setOperator((String) ((JsonObject) queryFilters
 					.get(item + "logicalOp")).get("value"));
+			} else {
+				criteriaItem.setOperator(KEY_CRITERIA_LOGICAL_OP_OR);
+			}
 
+			if (keys.indexOf(item + "match_contains") != -1) {
 			criteriaItem
 					.setMatchingOperator((String) ((JsonObject) queryFilters
 							.get(item + "match_contains")).get("value"));
-
+			} else {
+				criteriaItem
+				.setMatchingOperator("field_match");
+			}
+			
+			if (keys.indexOf(item + "match_contains") != -1) {
 			criteriaItem.setAllowNulls((String) ((JsonObject) queryFilters
 					.get(item + "include_nulls")).get("value"));
+			} else {
+				criteriaItem.setAllowNulls("field_include_null");
+			}
+			
 			this.criteria.add(criteriaItem);
 			i++;
 		}
