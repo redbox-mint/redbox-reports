@@ -181,7 +181,7 @@ public class ReportStats implements FascinatorService {
 		        			}
 		        		}
 		        		resultKey = fldKey+":"+value;
-		        		StatResult statRes = stat.getResults().get(resultKey);
+		        		StatResult statRes = stat.getResults().get(resultKey.toLowerCase());
 		        		if (statRes != null) {
 		        			statRes.incCounts();
 		        		} else {	                				                			
