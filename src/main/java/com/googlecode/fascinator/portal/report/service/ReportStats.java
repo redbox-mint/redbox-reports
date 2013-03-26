@@ -181,11 +181,16 @@ public class ReportStats implements FascinatorService {
 		        			}
 		        		}
 		        		resultKey = fldKey+":"+value;
-		        		StatResult statRes = stat.getResults().get(resultKey.toLowerCase());
+		        		StatResult statRes = stat.getResults().get(resultKey);
 		        		if (statRes != null) {
 		        			statRes.incCounts();
-		        		} else {	                				                			
-		        			log.debug("Key not found in map:" + resultKey);
+		        		} else {	
+		        			//DD: This happens in some sites for an unknown reason
+		        			// e.g. dataset becomes Dataset
+		        			statRes = stat.getResults().get(resultKey.toLowerCase());
+		        			if (statRes == null) {
+		        				log.debug("Key not found in map:" + resultKey);
+		        			}
 		        		}
 		        	}
 		        }
