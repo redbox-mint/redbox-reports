@@ -78,7 +78,7 @@ public class RecordsByStageChartHandler implements ChartHandler {
         chartData.addEntry(stepCountMap.get("inbox"), "", "Inbox");
         chartData.addEntry(stepCountMap.get("investigation"), "",
                 "Investigation");
-        chartData.addEntry(stepCountMap.get("metadata-review"), "", "Metadata");
+        chartData.addEntry(stepCountMap.get("metadata-review"), "", "Metadata Review");
         chartData
                 .addEntry(stepCountMap.get("final-review"), "", "Final Review");
         chartData.addEntry(stepCountMap.get("live"), "", "Published");
